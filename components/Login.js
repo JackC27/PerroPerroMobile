@@ -3,35 +3,35 @@ import { StyleSheet, Text, View, Pressable, TextInput, Image, TouchableWithoutFe
 import { StatusBar } from 'expo-status-bar';
 
 import * as Models from "../models"
-
 const TwilioPhoneResponse = Models.TwilioPhoneResponse;
 const TwilioVerifyResponse = Models.TwilioVerifyResponse;
 const WalkerModelActiveValid = Models.WalkerModelActiveValid;
 
-const requestTwilioPhoneVerification = (cb1, cb2, cb3) => {
+const requestTwilioPhoneVerification = (phone, resetInput) => {
   // Alert.alert('Right button pressed')
   // Doing it this way.. the response object properties are isolated from the
-  // rest of the application.... maybe? And send back only the data we need. 
-  if(TwilioPhoneResponse.success){
-    console.log(" response.body ", TwilioPhoneResponse.body)
-    cb3("")
-    cb2(TwilioPhoneResponse.body);
-    cb1(true)
-  }
+  // rest of the application.... maybe? And send back only the data we need.
+  resetInput("")
+ return true;
 }
 
-const verifyTwilioVerificationCode = (cb1, cb2) => {
-  console.log(" verify success", TwilioVerifyResponse);
-  cb2(TwilioVerifyResponse.body);
-  cb1(true) // This will depend on the actual response. Assuming happy path for now. 
+const verifyTwilioVerificationCode = (code, resetInput) => {
+  console.log(" verify success", code);
+  resetInput("")
+  return true;
 }
 
-export const Login = () => {
+const captureCodeAndNavigate = (setCode) => {
+  setCode("");
+}
+
+// I find it really neat that this prop is passed automatically from the Navigator Stack
+
+export const Login = ({navigation}) => {
     const [phone, setPhone] = useState(false);
     const [code, setCode] = useState(false);
 
     const [input, setInput] = useState("");
-    const [phoneSuccess, setPhoneSuccess] = useState(false);
     const [verifySuccess, setVerifySuccess] = useState(false);
     
     return (
@@ -50,26 +50,34 @@ export const Login = () => {
               <TextInput 
                 keyboardType="number-pad"
                 style = { styles.input }
-                placeholder = { phoneSuccess ? "XXXXXX" : "XXX-XXX-XXXX" }
-                textContentType= { phoneSuccess ? "oneTimeCode" : "phoneNumber" }
+                placeholder = { phone ? "XXXXXX" : "XXX-XXX-XXXX" }
+                textContentType= { phone ? "oneTimeCode" : "phoneNumber" }
                 onChangeText = { ( evt ) => { setInput( evt ) } }
-                value={ phoneSuccess ? input : input }
+                value={ phone ? input : input }
               />
             </View>
 
             <View style={styles.buttonContainer}>
               {
-                phoneSuccess 
+                phone
                   
                 ? <Pressable
-                    onPress={ () => { requestTwilioCodeVerification(setVerifySuccess, setCode) } }
+                    onPress={ () => {
+                      verifyTwilioVerificationCode(code, setInput) 
+                      ? navigation.navigate("Clients") //captureCodeAndNavigate(setCode)
+                      : setCode(false)
+                    }}
                     style={styles.button} 
                     accessibilityLabel="Verify Code Assume Success"
                   >
                     <Text style={styles.text}>{"Verify"}</Text>
                   </Pressable> 
                 : <Pressable
-                    onPress={ () => { requestTwilioPhoneVerification(setPhoneSuccess, setPhone, setInput) } }
+                    onPress={ () => { 
+                      requestTwilioPhoneVerification(phone, setInput) 
+                      ? setPhone(true) 
+                      : setPhone(false)
+                    } }
                     style={styles.button} 
                     accessibilityLabel="Submit Phone assume Success"
                   >
@@ -81,16 +89,13 @@ export const Login = () => {
             <View style={styles.helperTextContainer}>
               <Text style={styles.helperText}> 
                 {
-                  phoneSuccess
+                  phone
                   ? "Enter 6 digit code we just sent to you"
                   : `Enter your phone number to begin
-(SMS charges may apply)` 
-                   
-                  
+(SMS charges may apply)`
                 } 
               </Text>
             </View>
-
           </View>
         </View>
       </TouchableWithoutFeedback>

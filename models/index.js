@@ -27,3 +27,32 @@ export const TwilioPhoneResponse = {
     success: true,
     body: "Please enter your 6 digit verification code"
   }
+
+export const ClientListFromDB = [
+  {owner: "Jack Crish", dog: "Jetta", vet: "Dr Tia", address: {street: "901 Place", city:"Youngstown", zip:"44509"}},
+  {owner: "Mike", dog: "Chaz", vet: "UNK", address: {street: "901 Place", city:"Youngstown", zip:"44509"}},
+  {owner: "Ronald", dog:"Teddy", vet: "Dr. HorseMonk", address: {street: "901 Place", city:"Youngstown", zip:"44509"}},
+  {owner: "Billy", dog: "Blazer", vet: "Dr. WongTing", address: {street: "901 Place", city:"Youngstown", zip:"44509"}},
+  {owner: "Bobby", dog: "Bingo", vet: "Dr. WongTing", address: {street: "901 Place", city:"Youngstown", zip:"44509"}},
+  {owner: "Bud", dog: "Button", vet: "Dr. WongTing", address: {street: "901 Place", city:"Youngstown", zip:"44509"}},
+  {owner: "Spud", dog: "Butch", vet: "Dr. WongTing", address: {street: "901 Place", city:"Youngstown", zip:"44509"}},
+  
+]
+
+export const ClientStatusList = [
+  "OMW",
+  "Picked Up",
+  "Headed Home",
+  "Home",
+  "Delay",
+  "Custom"
+]
+
+export const WalkerConfig = {
+  askBeforeSend: true,
+  sortBy: "status",
+  theme: {main: "white", text:"black", fontZoom: 1},
+  navEnabled: false, 
+  scheduleEnabled: false, 
+  accountingEnabled: true
+}
